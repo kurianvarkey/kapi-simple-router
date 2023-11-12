@@ -155,3 +155,7 @@ Example response
 
 ### /books/download - Downloads the source xml file
 This will download the original xml file
+
+```
+http://localhost:8000/books/download
+```
