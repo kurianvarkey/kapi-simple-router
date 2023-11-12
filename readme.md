@@ -37,8 +37,8 @@ Example response
 ```
 http://localhost:8000/books
 ```
-Book list with the pagination details. This endpoint supports search, page, limit attributes
-When search query string is given, result will filter based on title and author.
+This will list with the pagination details. This endpoint supports search, page, limit attributes
+When 'search' query string is given, result will be filtered based on title and author.
 
 ```
 /books?search=Corets
@@ -57,7 +57,9 @@ When search query string is given, result will filter based on title and author.
 ```
 
 search = search terms (string)
+
 limit = records per request (integer)
+
 page = current page to navigate, default is 1 (integer)
 
 Example response 
@@ -98,6 +100,10 @@ If there are no books then
 ```
 http://localhost:8000/books/:id 
 ```
+```
+Eg: http://localhost:8000/books/bk101
+```
+
 List the book for the given id. If not found, error message will show 
 
 Example response 
