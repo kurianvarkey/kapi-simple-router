@@ -85,7 +85,7 @@ final class BookCollection implements JsonSerializable
         $result = [
             'total' => $this->total,
             'total_pages' => $this->totalPages,
-            'per_page' => $this->limit,
+            'limit' => $this->limit,
             'current_page' => $this->page,
             'results' => []
         ];

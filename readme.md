@@ -38,6 +38,7 @@ Example response
 http://localhost:8000/books
 ```
 Book list with the pagination details. This endpoint supports search, page, limit attributes
+When search query string is given, result will filter based on title and author.
 
 ```
 /books?search=Corets
@@ -55,6 +56,10 @@ Book list with the pagination details. This endpoint supports search, page, limi
 /books?search=Corets&limit=5&page=2
 ```
 
+search = search terms (string)
+limit = records per request (integer)
+page = current page to navigate, default is 1 (integer)
+
 Example response 
 ```
 {
@@ -64,7 +69,7 @@ Example response
     "data": {
         "total": 12,
         "total_pages": 2,
-        "per_page": 10,
+        "limit": 10,
         "current_page": 1,
         "results": [
             {
@@ -76,6 +81,16 @@ Example response
         ...
         ]
     }
+}
+```
+If there are no books then
+```
+{
+    "status": 0,
+    "code": 500,
+    "errors": [
+        "No books found for given request"
+    ]
 }
 ```
 

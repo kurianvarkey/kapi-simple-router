@@ -82,13 +82,18 @@ final class BookService
      */
     public function list(string $search = '', int $page = 1, int $limit = 10): BookCollection
     {
+        $results = [];
         if ($search != '') {
             $results = $this->getFilteredItems($search);
         } else {
             $results = $this->records;
         }
 
-        return new BookCollection($results, $page, $limit);
+        if (count($results) > 0) {
+            return new BookCollection($results, $page, $limit);
+        }
+        
+        throw new Exception("No books found for given request", Constants::HTTP_NOT_FOUND);
     }
 
     /**

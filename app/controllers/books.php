@@ -39,9 +39,17 @@ final class Books
      */
     public function index()
     {
-        $search = $_GET['search'] ?? '';
-        $page = $_GET['page'] ?? 1;
-        $limit = $_GET['limit'] ?? 10;
+        $search = filter_var($_GET['search'] ?? '', FILTER_DEFAULT);
+        $page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT);
+        $limit = filter_var($_GET['limit'] ?? 10, FILTER_VALIDATE_INT);
+
+        if ($page == 0) {
+            $page = 1;
+        }
+
+        if ($limit == 0) {
+            $limit = 10;
+        }
 
         try {
             echo Response::sendResponse(
