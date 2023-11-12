@@ -1,5 +1,5 @@
 # Setup
-This application is setup to run with PHP 8.2. If the php version is below that, it won't run and will show an error.
+This application is setup to run with PHP 8.2. If the php version is below that, it show an error.
 
 ## Getting Started
 
