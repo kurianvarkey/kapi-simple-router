@@ -140,10 +140,6 @@ final class BookService
             throw new Exception("Source file not set.", Constants::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        if (!$contents = file_get_contents($this->getSourceFile())) {
-            throw new Exception($this->getSourceFile() . " file is not a valid xml or could not read.",  Constants::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
         try {
             $xml = new XMLReader();
             $xml->open($this->getSourceFile());
