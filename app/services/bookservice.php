@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Books Service class which is responsible for all the data operations
  * 
@@ -12,8 +13,11 @@ namespace App\Services;
 
 use App\Resources\BookCollection;
 use App\Resources\BookResource;
+use DOMDocument;
 use Exception;
 use Kapi\Constants;
+use SimpleXMLElement;
+use XMLReader;
 
 final class BookService
 {
@@ -92,7 +96,7 @@ final class BookService
         if (count($results) > 0) {
             return new BookCollection($results, $page, $limit);
         }
-        
+
         throw new Exception("No books found for given request", Constants::HTTP_NOT_FOUND);
     }
 
@@ -142,29 +146,38 @@ final class BookService
         }
 
         try {
-            if ($data = new \SimpleXMLElement($contents)) {
-                if (isset($data->book) && $data->book) {
-                    foreach ($data->book as $book) {
-                        $attributes = $book->attributes();
-                        $id = trim((string) $attributes?->id) ?? '';
-                        $price = (float) $book->price;
-                        $size = mb_strlen(serialize((array)$book), '8bit');
+            $xml = new XMLReader();
+            $xml->open($this->getSourceFile());
 
-                        $this->records[$id] = (object) [
-                            "id" => $id,
-                            "author" => (string) $book->author,
-                            "title" => (string) $book->title,
-                            "genre" => (string) $book->genre,
-                            "price" => $price,
-                            "publish_date" => (string) $book->publish_date,
-                            "description" => (string) $book->description,
-                            "size" => $size
-                        ];
+            // move to the first <book /> node
+            while ($xml->read() && $xml->name !== 'book');
 
-                        $this->totalBookPrice += $price;
-                        $this->totalBookSize += $size;
-                    }
+            // loop to read the whole xml
+            while ($xml->name === 'book') {
+                $book_xml = $xml->readOuterXml();
+                if ($book = new SimpleXMLElement($book_xml)) {
+                    $attributes = $book->attributes();
+                    $id = trim((string) $attributes?->id) ?? '';
+                    $price = (float) $book->price;
+                    $size = mb_strlen($book_xml, '8bit');
+
+                    $this->records[$id] = (object) [
+                        "id" => $id,
+                        "author" => (string) $book->author,
+                        "title" => (string) $book->title,
+                        "genre" => (string) $book->genre,
+                        "price" => $price,
+                        "publish_date" => (string) $book->publish_date,
+                        "description" => (string) $book->description,
+                        "size" => $size
+                    ];
+
+                    $this->totalBookPrice += $price;
+                    $this->totalBookSize += $size;
                 }
+
+                // go to next <book />
+                $xml->next('book');
             }
         } catch (Exception $e) {
             throw new Exception($e->getMessage(), Constants::HTTP_INTERNAL_SERVER_ERROR);
