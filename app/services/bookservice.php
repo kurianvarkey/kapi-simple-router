@@ -13,7 +13,6 @@ namespace App\Services;
 
 use App\Resources\BookCollection;
 use App\Resources\BookResource;
-use DOMDocument;
 use Exception;
 use Kapi\Constants;
 use SimpleXMLElement;
