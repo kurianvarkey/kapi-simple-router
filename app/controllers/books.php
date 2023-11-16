@@ -12,6 +12,8 @@
 namespace App\Controllers;
 
 use App\Helpers\Response;
+use App\Resources\BookCollection;
+use App\Resources\BookResource;
 use App\Services\BookService;
 use Exception;
 use Kapi\Constants;
@@ -53,7 +55,11 @@ final class Books
 
         try {
             echo Response::sendResponse(
-                data: $this->bookService->load()->list(search: $search, page: $page, limit: $limit)
+                data: new BookCollection(
+                    books: $this->bookService->load()->list(search: $search),
+                    page: $page, 
+                    limit: $limit
+                )
             );
         } catch (Exception $e) {
             echo Response::sendErrorResponse(
@@ -73,7 +79,7 @@ final class Books
     {
         try {
             echo Response::sendResponse(
-                data: $this->bookService->load()->findById(trim($id))
+                data: new BookResource($this->bookService->load()->findById($id))
             );
         } catch (Exception $e) {
             echo Response::sendErrorResponse(

@@ -11,8 +11,6 @@
 
 namespace App\Services;
 
-use App\Resources\BookCollection;
-use App\Resources\BookResource;
 use Exception;
 use Kapi\Constants;
 use SimpleXMLElement;
@@ -81,9 +79,9 @@ final class BookService
      * @param string $search
      * @param integer $page
      * @param integer $limit
-     * @return BookCollection
+     * @return array|exception
      */
-    public function list(string $search = '', int $page = 1, int $limit = 10): BookCollection
+    public function list(string $search = ''): ?array
     {
         $results = [];
         if ($search != '') {
@@ -93,7 +91,7 @@ final class BookService
         }
 
         if (count($results) > 0) {
-            return new BookCollection($results, $page, $limit);
+            return $results;
         }
 
         throw new Exception("No books found for given request", Constants::HTTP_NOT_FOUND);
@@ -103,12 +101,13 @@ final class BookService
      * Get the book by id
      *
      * @param string $id
-     * @return BookResource|exception
+     * @return object|exception
      */
-    public function findById(string $id): ?BookResource
+    public function findById(string $id): ?object
     {
+        $id = trim($id);
         if (isset($this->records[$id])) {
-            return new BookResource($this->records[$id]);
+            return $this->records[$id];
         }
 
         throw new Exception("Book not found for id $id", Constants::HTTP_NOT_FOUND);
